@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema(
       default: 'student',
     },
     studentId: { type: String },
+    organizerId: { type: String },
+    adminId: { type: String },
     major: { type: String },
     society: { type: String },
     position: { type: String },

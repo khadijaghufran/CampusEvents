@@ -1,6 +1,9 @@
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { User } from '../models/User.js';
 import { Event } from '../models/Event.js';
+import { connectDB } from '../config/db.js';
 
 dotenv.config();
 
@@ -152,3 +155,21 @@ export const seedInitialData = async () => {
     console.error('⚠️ Seeding error:', err.message);
   }
 };
+
+// Auto-run if executed directly via CLI
+const isDirectRun =
+  process.argv[1] &&
+  path.resolve(process.argv[1]).toLowerCase() === fileURLToPath(import.meta.url).toLowerCase();
+
+if (isDirectRun) {
+  const runSeed = async () => {
+    await connectDB();
+    await seedInitialData();
+    console.log('🎉 MongoDB seeding and updating process complete!');
+    process.exit(0);
+  };
+  runSeed().catch((err) => {
+    console.error('❌ Direct seeding failed:', err);
+    process.exit(1);
+  });
+}
