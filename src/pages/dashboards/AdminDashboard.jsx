@@ -31,7 +31,7 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <p className="text-sm text-slate-500 mt-1">
-                {user?.department || 'Office of Student Affairs'} • {user?.email}
+                {user?.department || 'Directorate of Student Affairs'} • {user?.email} • Admin ID: {user?.adminId || 'ADM-2026-1102'}
               </p>
             </div>
           </div>

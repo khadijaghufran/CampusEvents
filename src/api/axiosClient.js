@@ -4,7 +4,7 @@ import axios from 'axios';
  * Global Axios HTTP client configured for CampusEvents API
  */
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

@@ -52,16 +52,16 @@ export default function LoginPage() {
     setServerError('');
     if (roleKey === ROLES.STUDENT) {
       setFieldValue('role', ROLES.STUDENT);
-      setFieldValue('email', 'student@campus.edu');
-      setFieldValue('password', 'password123');
+      setFieldValue('email', 'fatimanoor8841@gmail.com');
+      setFieldValue('password', 'Student@Pk2026!');
     } else if (roleKey === ROLES.ORGANIZER) {
       setFieldValue('role', ROLES.ORGANIZER);
-      setFieldValue('email', 'organizer@campus.edu');
-      setFieldValue('password', 'password123');
+      setFieldValue('email', 'muhammadbilal5521@gmail.com');
+      setFieldValue('password', 'Organizer#Pk2026');
     } else if (roleKey === ROLES.ADMIN) {
       setFieldValue('role', ROLES.ADMIN);
-      setFieldValue('email', 'admin@campus.edu');
-      setFieldValue('password', 'password123');
+      setFieldValue('email', 'tariqmehmood1102@gmail.com');
+      setFieldValue('password', 'Admin$Pk2026!');
     }
   };
 
@@ -184,7 +184,7 @@ export default function LoginPage() {
               id="email"
               name="email"
               type="email"
-              placeholder="e.g. student@campus.edu"
+              placeholder="e.g. fatimanoor8841@gmail.com"
               value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -199,7 +199,7 @@ export default function LoginPage() {
             label="Password"
             required
             error={touched.password ? errors.password : undefined}
-            helperText="Must be at least 6 characters"
+            helperText="Must be at least 8 characters with uppercase, lowercase, number, and symbol"
           >
             <Input
               id="password"
@@ -248,30 +248,101 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-8 pt-6 border-t border-slate-100">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2.5 text-center">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 text-center">
             Quick Demo Autofill
           </p>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="space-y-2">
+            {/* Student Account */}
             <button
               type="button"
               onClick={() => handleQuickFill(ROLES.STUDENT)}
-              className="text-[11px] font-medium py-1.5 px-2 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 transition-colors border border-teal-200/60"
+              className="w-full text-left p-2.5 rounded-xl bg-teal-50/70 hover:bg-teal-100/70 border border-teal-200/80 transition-all flex items-center justify-between group shadow-xs"
+              title="Click to autofill Fatima Noor's credentials"
             >
-              Demo Student
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-teal-600 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-xs">
+                  FN
+                </div>
+                <div className="min-w-0 text-left">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="font-bold text-slate-900 text-xs">Fatima Noor</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-teal-100 text-teal-800 font-semibold">
+                      Student
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-teal-800/90 font-mono truncate">
+                    fatimanoor8841@gmail.com
+                  </p>
+                </div>
+              </div>
+              <div className="text-right flex-shrink-0 pl-2">
+                <span className="text-[10px] text-slate-500 font-mono block">Student@Pk2026!</span>
+                <span className="text-[10px] text-teal-700 font-semibold group-hover:underline">
+                  Autofill →
+                </span>
+              </div>
             </button>
+
+            {/* Organizer Account */}
             <button
               type="button"
               onClick={() => handleQuickFill(ROLES.ORGANIZER)}
-              className="text-[11px] font-medium py-1.5 px-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 transition-colors border border-amber-200/60"
+              className="w-full text-left p-2.5 rounded-xl bg-amber-50/70 hover:bg-amber-100/70 border border-amber-200/80 transition-all flex items-center justify-between group shadow-xs"
+              title="Click to autofill Muhammad Bilal's credentials"
             >
-              Demo Organizer
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-amber-600 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-xs">
+                  MB
+                </div>
+                <div className="min-w-0 text-left">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="font-bold text-slate-900 text-xs">Muhammad Bilal</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 font-semibold">
+                      Organizer
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-amber-800/90 font-mono truncate">
+                    muhammadbilal5521@gmail.com
+                  </p>
+                </div>
+              </div>
+              <div className="text-right flex-shrink-0 pl-2">
+                <span className="text-[10px] text-slate-500 font-mono block">Organizer#Pk2026</span>
+                <span className="text-[10px] text-amber-700 font-semibold group-hover:underline">
+                  Autofill →
+                </span>
+              </div>
             </button>
+
+            {/* Admin Account */}
             <button
               type="button"
               onClick={() => handleQuickFill(ROLES.ADMIN)}
-              className="text-[11px] font-medium py-1.5 px-2 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-800 transition-colors border border-purple-200/60"
+              className="w-full text-left p-2.5 rounded-xl bg-purple-50/70 hover:bg-purple-100/70 border border-purple-200/80 transition-all flex items-center justify-between group shadow-xs"
+              title="Click to autofill Dr. Tariq Mehmood's credentials"
             >
-              Demo Admin
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-purple-700 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-xs">
+                  TM
+                </div>
+                <div className="min-w-0 text-left">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="font-bold text-slate-900 text-xs">Dr. Tariq Mehmood</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-800 font-semibold">
+                      Admin
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-purple-800/90 font-mono truncate">
+                    tariqmehmood1102@gmail.com
+                  </p>
+                </div>
+              </div>
+              <div className="text-right flex-shrink-0 pl-2">
+                <span className="text-[10px] text-slate-500 font-mono block">Admin$Pk2026!</span>
+                <span className="text-[10px] text-purple-700 font-semibold group-hover:underline">
+                  Autofill →
+                </span>
+              </div>
             </button>
           </div>
         </div>

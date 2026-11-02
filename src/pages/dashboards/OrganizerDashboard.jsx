@@ -31,7 +31,7 @@ export default function OrganizerDashboard() {
                 </span>
               </div>
               <p className="text-sm text-slate-500 mt-1">
-                {user?.society || 'Society Organizer'} • {user?.email}
+                {user?.society || 'ACM & IEEE Student Chapter'} • {user?.email} • Organizer ID: {user?.organizerId || 'ORG-2026-5521'}
               </p>
             </div>
           </div>

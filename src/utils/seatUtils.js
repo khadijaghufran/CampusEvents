@@ -1,4 +1,4 @@
-import { EVENT_STATUS } from '../constants/eventStatus';
+import { EVENT_STATUS } from '../constants/eventStatus.js';
 
 /**
  * Calculates remaining available seats for an event. Never returns below 0.

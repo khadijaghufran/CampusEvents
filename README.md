@@ -41,9 +41,9 @@ cp .env.example .env
 
 | Role | Email | Password | Details |
 |---|---|---|---|
-| **Student** | `student@campus.edu` | `password123` | Amina Al-Mansoor (STU-2026-8841) |
-| **Society Organizer** | `organizer@campus.edu` | `password123` | Marcus Vance (IEEE & CS Society) |
-| **University Admin** | `admin@campus.edu` | `password123` | Dr. Sarah Jenkins (Student Affairs) |
+| **Student** | `fatimanoor8841@gmail.com` | `Student@Pk2026!` | Fatima Noor (STU-2026-8841) |
+| **Society Organizer** | `muhammadbilal5521@gmail.com` | `Organizer#Pk2026` | Muhammad Bilal (ORG-2026-5521) |
+| **University Admin** | `tariqmehmood1102@gmail.com` | `Admin$Pk2026!` | Prof. Dr. Tariq Mehmood (ADM-2026-1102) |
 
 *The login page also provides one-click "Quick Demo Autofill" buttons for instant testing.*
 
@@ -64,7 +64,7 @@ When `VITE_USE_MOCKS=false`, the client connects to:
    - **Request**: `{ studentId: string }`
    - **Response**: `{ success: boolean, message: string }`
 4. **`POST /api/contact`**
-   - **Request**: `{ name: string, email: string, topic: string, message: string }`
+   - **Request**: `{ name: string, age: number, email: string, topic: string, message: string }`
    - **Response**: `{ success: boolean, message: string, ticketId?: string }`
 
 ---

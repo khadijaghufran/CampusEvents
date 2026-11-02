@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useEffect, useCallback } from 'react';
 import { authService } from '../api/authService';
+import { MOCK_USERS } from '../mocks/users.js';
 
 const STORAGE_KEY = 'campusevents_auth_user';
 
@@ -10,7 +11,22 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : null;
+      if (!stored) return null;
+      const parsed = JSON.parse(stored);
+      // Automatically keep profile synchronized with current demo roster
+      const matched = MOCK_USERS.find(
+        (m) =>
+          m.id === parsed.id ||
+          m.role === parsed.role ||
+          m.email === parsed.email ||
+          (parsed.email && parsed.email.includes(m.role))
+      );
+      if (matched) {
+        const userObj = { ...parsed, ...matched };
+        delete userObj.password;
+        return userObj;
+      }
+      return parsed;
     } catch {
       return null;
     }

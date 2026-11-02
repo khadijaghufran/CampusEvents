@@ -12,13 +12,30 @@ export function useForm(initialValues = {}, validateFn = null) {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  const handleChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-    setValues((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  }, []);
+  const handleChange = useCallback(
+    (e) => {
+      const { name, value, type, checked } = e.target;
+      const nextVal = type === 'checkbox' ? checked : value;
+
+      setValues((prev) => {
+        const updated = {
+          ...prev,
+          [name]: nextVal,
+        };
+
+        if (validateFn) {
+          const validationErrors = validateFn(updated) || {};
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: validationErrors[name] || undefined,
+          }));
+        }
+
+        return updated;
+      });
+    },
+    [validateFn]
+  );
 
   const handleBlur = useCallback(
     (e) => {
@@ -33,9 +50,19 @@ export function useForm(initialValues = {}, validateFn = null) {
     [validateFn, values]
   );
 
-  const setFieldValue = useCallback((name, value) => {
-    setValues((prev) => ({ ...prev, [name]: value }));
-  }, []);
+  const setFieldValue = useCallback(
+    (name, value) => {
+      setValues((prev) => {
+        const updated = { ...prev, [name]: value };
+        if (validateFn) {
+          const validationErrors = validateFn(updated) || {};
+          setErrors(validationErrors);
+        }
+        return updated;
+      });
+    },
+    [validateFn]
+  );
 
   const setFieldError = useCallback((name, error) => {
     setErrors((prev) => ({ ...prev, [name]: error }));
@@ -49,15 +76,15 @@ export function useForm(initialValues = {}, validateFn = null) {
 
   const validate = useCallback(() => {
     if (!validateFn) return true;
-    const validationErrors = validateFn(values);
-    setErrors(validationErrors || {});
+    const validationErrors = validateFn(values) || {};
+    setErrors(validationErrors);
     // Mark all keys touched
     const allTouched = Object.keys(values).reduce((acc, key) => {
       acc[key] = true;
       return acc;
     }, {});
     setTouched(allTouched);
-    return Object.keys(validationErrors || {}).length === 0;
+    return Object.keys(validationErrors).length === 0;
   }, [validateFn, values]);
 
   return {

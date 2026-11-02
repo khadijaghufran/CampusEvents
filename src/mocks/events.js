@@ -1,4 +1,4 @@
-import { EVENT_STATUS } from '../constants/eventStatus';
+import { EVENT_STATUS } from '../constants/eventStatus.js';
 
 /**
  * Mock events database for CampusEvents

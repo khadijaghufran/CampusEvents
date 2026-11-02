@@ -22,6 +22,7 @@ export default function ContactPage() {
 
   const initialValues = {
     name: '',
+    age: '',
     email: '',
     topic: '',
     message: '',
@@ -100,24 +101,52 @@ export default function ContactPage() {
           )}
 
           <form onSubmit={handleSubmit} noValidate className="space-y-5">
-            {/* Full Name */}
-            <FormField
-              id="name"
-              label="Full Name"
-              required
-              error={touched.name ? errors.name : undefined}
-            >
-              <Input
-                id="name"
-                name="name"
-                placeholder="e.g. Jane Doe"
-                value={values.name}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.name && errors.name}
-                required
-              />
-            </FormField>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              <div className="sm:col-span-2">
+                <FormField
+                  id="name"
+                  label="Full Name"
+                  required
+                  error={touched.name ? errors.name : undefined}
+                >
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="e.g. Jane Doe"
+                    value={values.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.name && errors.name}
+                    required
+                  />
+                </FormField>
+              </div>
+
+              <div>
+                <FormField
+                  id="age"
+                  label="Age"
+                  required
+                  error={touched.age ? errors.age : undefined}
+                  helperText="Valid number (16-120)"
+                >
+                  <Input
+                    id="age"
+                    name="age"
+                    type="number"
+                    min="16"
+                    max="120"
+                    placeholder="e.g. 21"
+                    value={values.age}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.age && errors.age}
+                    numericOnly
+                    required
+                  />
+                </FormField>
+              </div>
+            </div>
 
             {/* Email Address */}
             <FormField
