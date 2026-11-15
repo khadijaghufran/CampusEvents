@@ -52,10 +52,15 @@ export default function EventCard({ event, onRegistrationSuccess }) {
       return;
     }
 
-    // Call service to register
+    // Call service to register via Facade Pattern
     setRegistering(true);
     try {
-      const response = await eventService.registerForEvent(event.id, user.id);
+      const response = await eventService.registerForEvent(
+        event.id,
+        user.id,
+        user.name,
+        user.email
+      );
       setSuccessMsg(response.message || 'Seat confirmed successfully!');
       if (onRegistrationSuccess) {
         onRegistrationSuccess(event.id);

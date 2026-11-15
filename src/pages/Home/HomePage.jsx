@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import EventCard from '../../components/events/EventCard';
 import LifecycleSteps from '../../components/events/LifecycleSteps';
@@ -9,9 +10,67 @@ import { useAuth } from '../../hooks/useAuth';
 import { ROUTES } from '../../constants/routes';
 import { ROLES } from '../../constants/roles';
 
+const CATEGORIES = [
+  'All',
+  'Technology & Research',
+  'Coding & Hackathon',
+  'Robotics & Hardware',
+  'Finance & Entrepreneurship',
+];
+
 export default function HomePage() {
   const { events, loading, error, refetch } = useEvents();
   const { isAuthenticated, role } = useAuth();
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [threadStats, setThreadStats] = useState(null);
+  const workerRef = useRef(null);
+
+  // Initialize and run Web Worker for Multi-Threaded search
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.Worker) {
+      try {
+        workerRef.current = new Worker('/workers/eventSearchWorker.js');
+        workerRef.current.onmessage = (e) => {
+          setFilteredEvents(e.data.filtered);
+          setThreadStats(e.data);
+        };
+      } catch (err) {
+        console.warn('Web Worker not supported or blocked, using sync filtering:', err);
+      }
+    }
+
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.terminate();
+      }
+    };
+  }, []);
+
+  // Dispatch filtering to Web Worker whenever events, query, or category changes
+  useEffect(() => {
+    if (workerRef.current) {
+      workerRef.current.postMessage({
+        events,
+        searchQuery,
+        selectedCategory,
+        statusFilter: 'published',
+      });
+    } else {
+      // Synchronous fallback
+      const q = searchQuery.toLowerCase();
+      const filtered = events.filter((e) => {
+        if (selectedCategory !== 'All' && e.category !== selectedCategory) return false;
+        if (q && !e.title.toLowerCase().includes(q) && !e.description.toLowerCase().includes(q)) {
+          return false;
+        }
+        return true;
+      });
+      setFilteredEvents(filtered);
+    }
+  }, [events, searchQuery, selectedCategory]);
 
   const scrollToLifecycle = () => {
     const section = document.getElementById('lifecycle');
@@ -29,7 +88,7 @@ export default function HomePage() {
   return (
     <div className="space-y-16 sm:space-y-24 pb-20">
       {/* 1. Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-teal-50/70 via-slate-50 to-white pt-16 pb-20 sm:pt-24 sm:pb-28 border-b border-slate-200/60">
+      <section className="relative overflow-hidden bg-gradient-to-b from-teal-50/70 via-slate-50 to-red pt-16 pb-20 sm:pt-24 sm:pb-28 border-b border-slate-200/60">
         {/* Subtle decorative background blur shapes */}
         <div
           className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-teal-200/40 blur-3xl pointer-events-none"
@@ -103,8 +162,59 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            {threadStats && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                ⚡ Multi-Thread WebWorker ({threadStats.durationMs || '<1'}ms)
+              </span>
+            )}
             <span className="text-xs text-slate-500 font-medium">Real-time seat tracking enabled</span>
+          </div>
+        </div>
+
+        {/* Multi-Threaded Filter & Search Controls */}
+        <div className="mb-8 p-4 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="relative flex-1">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                🔍
+              </span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search events by title, description, seminar hall, or society..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-100"
+              />
+            </div>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800"
+              >
+                Clear Search
+              </button>
+            )}
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">
+              Categories:
+            </span>
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  selectedCategory === cat
+                    ? 'bg-teal-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -133,35 +243,31 @@ export default function HomePage() {
         )}
 
         {/* Empty State */}
-        {!loading && !error && events.length === 0 && (
+        {!loading && !error && filteredEvents.length === 0 && (
           <div className="text-center py-16 px-4 bg-white rounded-2xl border border-slate-200">
             <div className="w-16 h-16 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+              <span className="text-2xl">🔍</span>
             </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-1">No Published Events Right Now</h3>
+            <h3 className="text-lg font-bold text-slate-900 mb-1">No Matching Events Found</h3>
             <p className="text-sm text-slate-500 max-w-sm mx-auto">
-              Check back shortly as upcoming society proposals get approved by administration.
+              No events matched "{searchQuery || selectedCategory}". Try adjusting your keywords or category.
             </p>
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCategory('All');
+              }}
+              className="mt-4 text-xs font-semibold text-teal-600 hover:underline"
+            >
+              Reset Filters
+            </button>
           </div>
         )}
 
         {/* Event Cards Grid */}
-        {!loading && !error && events.length > 0 && (
+        {!loading && !error && filteredEvents.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {events.map((event) => (
+            {filteredEvents.map((event) => (
               <EventCard
                 key={event.id}
                 event={event}
